@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hochzeitsanmeldung</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Monsanter Arabic', serif;
+      color: #000;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)),
+                  url('https://images.unsplash.com/photo-1585155777340-98c79fc80c94?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
+      z-index: -1;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+    }
+
+    h1 small {
+      display: block;
+      font-size: 0.6em;
+      margin-top: 8px;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.92);
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 650px;
+      margin: 20px auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .emoji-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .emoji-buttons button {
+      flex: 1;
+      padding: 10px;
+      font-size: 1.5em;
+      background-color: #eee;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .emoji-buttons button:hover {
+      background-color: #ddd;
+    }
+
+    .counter {
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+
+    .reset-button {
+      background-color: #ccc;
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .reset-button:hover {
+      background-color: #bbb;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .button-group button {
+      flex: 1 1 48%;
+      padding: 12px;
+      font-size: 1em;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #333;
+    }
+
+    .summary {
+      text-align: center;
+      font-size: 1.1em;
+    }
+
+    .success {
+      color: green;
+      margin-top: 15px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .button-group button {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hochzeit<br><small>Freya & Joel</small></h1>
+
+  <div class="card">
+    <form id="rsvpForm">
+      <label for="name">Dein Name</label>
+      <input type="text" id="name" required />
+
+      <label>Erwachsene hinzufügen:</label>
+      <div class="emoji-buttons">
+        <button type="button" onclick="updateCounter('adult', 1)">🧑‍🦰</button>
+        <button type="button" onclick="updateCounter('adult', 1)">👱‍♀️</button>
+      </div>
+      <div class="counter" id="adultCount">Anzahl Erwachsene: 0</div>
+      <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zurücksetzen</button>
+
+      <label>Kinder hinzufügen:</label>
+      <div class="emoji-buttons">
+        <button type="button" onclick="updateCounter('child', 1)">👶</button>
+        <button type="button" onclick="updateCounter('child', 1)">👧</button>
+        <button type="button" onclick="updateCounter('child', 1)">🧒</button>
+      </div>
+      <div class="counter" id="childCount">Anzahl Kinder: 0</div>
+      <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zurücksetzen</button>
+
+      <input type="hidden" id="adults" value="0">
+      <input type="hidden" id="children" value="0">
+
+      <div class="button-group">
+        <button type="button" onclick="submitRsvp(true)">Ich komme</button>
+        <button type="button" onclick="submitRsvp(false)">Ich komme nicht</button>
+      </div>
+
+      <div id="successMessage" class="success"></div>
+    </form>
+  </div>
+
+  <div class="card summary">
+    <h2>Zusagen bisher</h2>
+    <p>Erwachsene: <span id="totalAdults">0</span></p>
+    <p>Kinder: <span id="totalChildren">0</span></p>
+  </div>
+
+  <script>
+    let totalAdults = 0;
+    let totalChildren = 0;
+    let adultTemp = 0;
+    let childTemp = 0;
+    const allResponses = [];
+
+    function updateCounter(type, amount) {
+      if (type === 'adult') {
+        adultTemp += amount;
+        document.getElementById('adults').value = adultTemp;
+        document.getElementById('adultCount').textContent = `Anzahl Erwachsene: ${adultTemp}`;
+      } else {
+        childTemp += amount;
+        document.getElementById('children').value = childTemp;
+        document.getElementById('childCount').textContent = `Anzahl Kinder: ${childTemp}`;
+      }
+    }
+
+    function resetCounter(type) {
+      if (type === 'adult') {
+        adultTemp = 0;
+        document.getElementById('adults').value = 0;
+        document.getElementById('adultCount').textContent = 'Anzahl Erwachsene: 0';
+      } else {
+        childTemp = 0;
+        document.getElementById('children').value = 0;
+        document.getElementById('childCount').textContent = 'Anzahl Kinder: 0';
+      }
+    }
+
+    function submitRsvp(isComing) {
+      const name = document.getElementById("name").value.trim();
+      const adults = parseInt(document.getElementById("adults").value) || 0;
+      const children = parseInt(document.getElementById("children").value) || 0;
+
+      if (!name) {
+        alert("Bitte gib deinen Namen ein.");
+        return;
+      }
+
+      let message = "";
+      if (isComing) {
+        totalAdults += adults;
+        totalChildren += children;
+        message = `Danke, ${name}, wir freuen uns auf euch!`;
+        allResponses.push(`${name} – ${adults} Erw., ${children} Kind(er)`);
+      } else {
+        message = `Schade, ${name}, dass du nicht kommen kannst.`;
+        allResponses.push(`${name} – sagt ab`);
+      }
+
+      document.getElementById("totalAdults").textContent = totalAdults;
+      document.getElementById("totalChildren").textContent = totalChildren;
+      document.getElementById("successMessage").textContent = message;
+
+      // Daten an Google Sheet senden
+      const url = "https://script.google.com/macros/s/AKfycbxG5wG2uGK1q-AsACxYvRNx5tYhE_TXZn23_wLhx94oybaeycIz6PxTdDddtb1kYnKc/exec";
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          status: isComing ? "Zusage" : "Absage",
+          adults: isComing ? adults : 0,
+          children: isComing ? children : 0,
+        }),
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log("Antwort gespeichert:", data);
+      })
+      .catch(error => {
+        console.error("Fehler beim Speichern:", error);
+      });
+
+      document.getElementById("rsvpForm").reset();
+      resetCounter('adult');
+      resetCounter('child');
+    }
+  </script>
+</body>
+</html>
