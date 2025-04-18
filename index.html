@@ -1,49 +1,177 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" /> <!-- Wichtig: UTF-8! -->
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hochzeitsanmeldung</title>
   <style>
-    /* (Style bleibt gleich wie vorher – gekürzt hier) */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1585155777340-98c79fc80c94?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+    }
+
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+    }
+
+    h2 {
+      font-weight: normal;
+      font-size: 1.4em;
+      color: #666;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .emoji-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .emoji-buttons button {
+      flex: 1;
+      font-size: 1.5em;
+      padding: 10px;
+      background: #f3f3f3;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .emoji-buttons button:hover {
+      background: #e0e0e0;
+    }
+
+    .counter {
+      margin-top: 10px;
+      font-size: 1em;
+    }
+
+    .reset-button {
+      margin-top: 10px;
+      background: #ddd;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .reset-button:hover {
+      background: #ccc;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1em;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background: #555;
+    }
+
+    .success {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .button-group {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="overlay">
+    <div class="container">
+      <h1>Hochzeit</h1>
+      <h2>Freya & Joel</h2>
 
-  <h1>Hochzeit<br><small>Freya & Joel</small></h1>
+      <form id="rsvpForm">
+        <label for="name">Dein Name</label>
+        <input type="text" id="name" required />
 
-  <div class="card">
-    <form id="rsvpForm">
-      <label for="name">Dein Name</label>
-      <input type="text" id="name" required />
+        <label>Erwachsene hinzufügen:</label>
+        <div class="emoji-buttons">
+          <button type="button" onclick="updateCounter('adult', 1)">🧑</button>
+          <button type="button" onclick="updateCounter('adult', 1)">👩</button>
+        </div>
+        <div class="counter" id="adultCount">Anzahl Erwachsene: 0</div>
+        <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zurücksetzen</button>
 
-      <label>Erwachsene hinzufügen:</label>
-      <div class="emoji-buttons">
-        <button type="button" onclick="updateCounter('adult', 1)">🧑</button>
-        <button type="button" onclick="updateCounter('adult', 1)">👩</button>
-      </div>
-      <div class="counter" id="adultCount">Anzahl Erwachsene: 0</div>
-      <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zurücksetzen</button>
+        <label>Kinder hinzufügen:</label>
+        <div class="emoji-buttons">
+          <button type="button" onclick="updateCounter('child', 1)">👶</button>
+          <button type="button" onclick="updateCounter('child', 1)">👧</button>
+          <button type="button" onclick="updateCounter('child', 1)">🧒</button>
+        </div>
+        <div class="counter" id="childCount">Anzahl Kinder: 0</div>
+        <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zurücksetzen</button>
 
-      <label>Kinder hinzufügen:</label>
-      <div class="emoji-buttons">
-        <button type="button" onclick="updateCounter('child', 1)">👶</button>
-        <button type="button" onclick="updateCounter('child', 1)">👧</button>
-        <button type="button" onclick="updateCounter('child', 1)">🧒</button>
-      </div>
-      <div class="counter" id="childCount">Anzahl Kinder: 0</div>
-      <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zurücksetzen</button>
+        <input type="hidden" id="adults" value="0">
+        <input type="hidden" id="children" value="0">
 
-      <input type="hidden" id="adults" value="0">
-      <input type="hidden" id="children" value="0">
+        <div class="button-group">
+          <button type="button" onclick="submitRsvp(true)">Ich komme</button>
+          <button type="button" onclick="submitRsvp(false)">Ich komme nicht</button>
+        </div>
 
-      <div class="button-group">
-        <button type="button" onclick="submitRsvp(true)">Ich komme</button>
-        <button type="button" onclick="submitRsvp(false)">Ich komme nicht</button>
-      </div>
-
-      <div id="successMessage" class="success"></div>
-    </form>
+        <div id="successMessage" class="success"></div>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -90,7 +218,6 @@
 
       document.getElementById("successMessage").textContent = message;
 
-      // Google Sheets URL – ersetzt durch deine Web App URL
       const url = "https://script.google.com/macros/s/AKfycbxG5wG2uGK1q-AsACxYvRNx5tYhE_TXZn23_wLhx94oybaeycIz6PxTdDddtb1kYnKc/exec";
 
       fetch(url, {
