@@ -11,7 +11,7 @@
 
     body {
       margin: 0;
-      font-family: 'Monsanter Arabic', serif;
+      font-family: 'Arial', sans-serif;
       color: #000;
       padding: 20px;
       position: relative;
@@ -119,11 +119,6 @@
       background-color: #333;
     }
 
-    .summary {
-      text-align: center;
-      font-size: 1.1em;
-    }
-
     .success {
       color: green;
       margin-top: 15px;
@@ -165,22 +160,22 @@
       <label for="name">Dein Name</label>
       <input type="text" id="name" required />
 
-      <label>Erwachsene hinzufügen:</label>
+      <label>Erwachsene hinzuf�gen:</label>
       <div class="emoji-buttons">
-        <button type="button" onclick="updateCounter('adult', 1)">🧑‍🦰</button>
-        <button type="button" onclick="updateCounter('adult', 1)">👱‍♀️</button>
+        <button type="button" onclick="updateCounter('adult', 1)">?????</button>
+        <button type="button" onclick="updateCounter('adult', 1)">?????</button>
       </div>
       <div class="counter" id="adultCount">Anzahl Erwachsene: 0</div>
-      <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zurücksetzen</button>
+      <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zur�cksetzen</button>
 
-      <label>Kinder hinzufügen:</label>
+      <label>Kinder hinzuf�gen:</label>
       <div class="emoji-buttons">
-        <button type="button" onclick="updateCounter('child', 1)">👶</button>
-        <button type="button" onclick="updateCounter('child', 1)">👧</button>
-        <button type="button" onclick="updateCounter('child', 1)">🧒</button>
+        <button type="button" onclick="updateCounter('child', 1)">??</button>
+        <button type="button" onclick="updateCounter('child', 1)">??</button>
+        <button type="button" onclick="updateCounter('child', 1)">??</button>
       </div>
       <div class="counter" id="childCount">Anzahl Kinder: 0</div>
-      <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zurücksetzen</button>
+      <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zur�cksetzen</button>
 
       <input type="hidden" id="adults" value="0">
       <input type="hidden" id="children" value="0">
@@ -194,18 +189,9 @@
     </form>
   </div>
 
-  <div class="card summary">
-    <h2>Zusagen bisher</h2>
-    <p>Erwachsene: <span id="totalAdults">0</span></p>
-    <p>Kinder: <span id="totalChildren">0</span></p>
-  </div>
-
   <script>
-    let totalAdults = 0;
-    let totalChildren = 0;
     let adultTemp = 0;
     let childTemp = 0;
-    const allResponses = [];
 
     function updateCounter(type, amount) {
       if (type === 'adult') {
@@ -241,22 +227,13 @@
         return;
       }
 
-      let message = "";
-      if (isComing) {
-        totalAdults += adults;
-        totalChildren += children;
-        message = `Danke, ${name}, wir freuen uns auf euch!`;
-        allResponses.push(`${name} – ${adults} Erw., ${children} Kind(er)`);
-      } else {
-        message = `Schade, ${name}, dass du nicht kommen kannst.`;
-        allResponses.push(`${name} – sagt ab`);
-      }
+      const message = isComing
+        ? `Danke, ${name}, wir freuen uns auf euch!`
+        : `Schade, ${name}, dass du nicht kommen kannst.`;
 
-      document.getElementById("totalAdults").textContent = totalAdults;
-      document.getElementById("totalChildren").textContent = totalChildren;
       document.getElementById("successMessage").textContent = message;
 
-      // Daten an Google Sheet senden
+      // ? Hier deine eigene Web App URL einf�gen:
       const url = "https://script.google.com/macros/s/AKfycbxG5wG2uGK1q-AsACxYvRNx5tYhE_TXZn23_wLhx94oybaeycIz6PxTdDddtb1kYnKc/exec";
 
       fetch(url, {
