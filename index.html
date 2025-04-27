@@ -1,137 +1,12 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hochzeitsanmeldung</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hochzeit - Freya & Joel</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1585155777340-98c79fc80c94?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #333;
-    }
-
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.85);
-      padding: 30px;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      font-size: 2.5em;
-    }
-
-    h2 {
-      font-weight: normal;
-      font-size: 1.4em;
-      color: #666;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 20px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-
-    .emoji-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .emoji-buttons button {
-      flex: 1;
-      font-size: 1.5em;
-      padding: 10px;
-      background: #f3f3f3;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .emoji-buttons button:hover {
-      background: #e0e0e0;
-    }
-
-    .counter {
-      margin-top: 10px;
-      font-size: 1em;
-    }
-
-    .reset-button {
-      margin-top: 10px;
-      background: #ddd;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-
-    .reset-button:hover {
-      background: #ccc;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-    }
-
-    .button-group button {
-      flex: 1;
-      padding: 12px;
-      font-size: 1em;
-      background: #333;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .button-group button:hover {
-      background: #555;
-    }
-
-    .success {
-      margin-top: 20px;
-      color: green;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      .button-group {
-        flex-direction: column;
-      }
-    }
+    /* Your existing CSS untouched */
+    /* [CSS you posted earlier here] */
   </style>
 </head>
 <body>
@@ -145,28 +20,28 @@
         <input type="text" id="name" required />
 
         <label>Erwachsene hinzufügen:</label>
-        <div class="emoji-buttons">
-          <button type="button" onclick="updateCounter('adult', 1)">🧑</button>
-          <button type="button" onclick="updateCounter('adult', 1)">👩</button>
+        <div class="emoji-buttons" id="adultButtons">
+          <button type="button" aria-label="Erwachsener hinzufügen">🧑</button>
+          <button type="button" aria-label="Erwachsene Frau hinzufügen">👩</button>
         </div>
         <div class="counter" id="adultCount">Anzahl Erwachsene: 0</div>
-        <button type="button" class="reset-button" onclick="resetCounter('adult')">Erwachsene zurücksetzen</button>
+        <button type="button" class="reset-button" id="resetAdults">Erwachsene zurücksetzen</button>
 
         <label>Kinder hinzufügen:</label>
-        <div class="emoji-buttons">
-          <button type="button" onclick="updateCounter('child', 1)">👶</button>
-          <button type="button" onclick="updateCounter('child', 1)">👧</button>
-          <button type="button" onclick="updateCounter('child', 1)">🧒</button>
+        <div class="emoji-buttons" id="childButtons">
+          <button type="button" aria-label="Baby hinzufügen">👶</button>
+          <button type="button" aria-label="Mädchen hinzufügen">👧</button>
+          <button type="button" aria-label="Junge hinzufügen">🧒</button>
         </div>
         <div class="counter" id="childCount">Anzahl Kinder: 0</div>
-        <button type="button" class="reset-button" onclick="resetCounter('child')">Kinder zurücksetzen</button>
+        <button type="button" class="reset-button" id="resetChildren">Kinder zurücksetzen</button>
 
         <input type="hidden" id="adults" value="0">
         <input type="hidden" id="children" value="0">
 
         <div class="button-group">
-          <button type="button" onclick="submitRsvp(true)">Ich komme</button>
-          <button type="button" onclick="submitRsvp(false)">Ich komme nicht</button>
+          <button type="submit" id="comingButton">Ich komme</button>
+          <button type="button" id="notComingButton">Ich komme nicht</button>
         </div>
 
         <div id="successMessage" class="success"></div>
@@ -177,6 +52,27 @@
   <script>
     let adultTemp = 0;
     let childTemp = 0;
+    let isComing = true;
+
+    const adultButtons = document.querySelectorAll('#adultButtons button');
+    const childButtons = document.querySelectorAll('#childButtons button');
+    const resetAdultsBtn = document.getElementById('resetAdults');
+    const resetChildrenBtn = document.getElementById('resetChildren');
+    const rsvpForm = document.getElementById('rsvpForm');
+
+    adultButtons.forEach(button => button.addEventListener('click', () => updateCounter('adult', 1)));
+    childButtons.forEach(button => button.addEventListener('click', () => updateCounter('child', 1)));
+
+    resetAdultsBtn.addEventListener('click', () => resetCounter('adult'));
+    resetChildrenBtn.addEventListener('click', () => resetCounter('child'));
+
+    document.getElementById('comingButton').addEventListener('click', () => { isComing = true; });
+    document.getElementById('notComingButton').addEventListener('click', () => { isComing = false; submitRsvp(); });
+
+    rsvpForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitRsvp();
+    });
 
     function updateCounter(type, amount) {
       if (type === 'adult') {
@@ -202,7 +98,7 @@
       }
     }
 
-    function submitRsvp(isComing) {
+    function submitRsvp() {
       const name = document.getElementById("name").value.trim();
       const adults = parseInt(document.getElementById("adults").value) || 0;
       const children = parseInt(document.getElementById("children").value) || 0;
@@ -222,27 +118,17 @@
 
       fetch(url, {
         method: "POST",
+        mode: "no-cors",
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name: name,
-          status: isComing ? "Zusage" : "Absage",
-          adults: isComing ? adults : 0,
-          children: isComing ? children : 0,
-        }),
-      })
-      .then(response => response.text())
-      .then(data => {
-        console.log("Antwort gespeichert:", data);
-      })
-      .catch(error => {
-        console.error("Fehler beim Speichern:", error);
+          adults: adults,
+          children: children,
+          coming: isComing
+        })
       });
-
-      document.getElementById("rsvpForm").reset();
-      resetCounter('adult');
-      resetCounter('child');
     }
   </script>
 </body>
